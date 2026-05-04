@@ -1,0 +1,28 @@
+#######################################
+# Syntax Coloring Map For PushButton
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+CheckMemoryAreasOverlap	KEYWORD2
+Memory_PrintLn	KEYWORD2
+RingBuffer_SetValue	KEYWORD2
+RingBuffer_SetValueBackward	KEYWORD2
+RingBuffer_GetBytesAndMovePtr	KEYWORD2
+RingBuffer_GetValueAndMovePtr	KEYWORD2
+RingBuffer_IncrementPointer	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
