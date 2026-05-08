@@ -25,75 +25,6 @@ void Memory_PrintLn (uint8_t* i_pMemory,
 }
 
 //--------------------------------------------------------------------
-bool RingBuffer_SetValue (uint8_t*  i_pRingBuffer,
-                          uint16_t  i_RingBufferLength,
-                          uint16_t  i_StartOffset,
-                          uint16_t  i_ByteCount,
-                          uint8_t   i_Value)
-{
-  if (i_pRingBuffer == 0)
-    return false;
-  if (i_StartOffset >= i_RingBufferLength)
-    return false;
-  if (i_ByteCount == 0)
-    return true;
-  if (i_ByteCount > i_RingBufferLength)
-    return false;
-
-  if (i_ByteCount == i_RingBufferLength)
-  {
-    memset (i_pRingBuffer, i_Value, i_RingBufferLength);
-    return true;
-  }
-
-  uint16_t bytesUntilEnd = i_RingBufferLength - i_StartOffset;
-  if (i_ByteCount <= bytesUntilEnd)
-  {
-    memset (i_pRingBuffer + i_StartOffset, i_Value, i_ByteCount);
-    return true;
-  }
-
-  uint16_t sizeOf2ndBlock = i_ByteCount - bytesUntilEnd;
-  memset (i_pRingBuffer + i_StartOffset, i_Value, bytesUntilEnd);
-  memset (i_pRingBuffer                , i_Value, sizeOf2ndBlock);
-  return true;
-}
-
-//--------------------------------------------------------------------
-bool RingBuffer_SetValueBackward (uint8_t*  i_pRingBuffer,
-                                  uint16_t  i_RingBufferLength,
-                                  uint16_t  i_EndOffset,
-                                  uint16_t  i_ByteCount,
-                                  uint8_t   i_Value)
-{
-  if (i_pRingBuffer == 0)
-    return false;
-  if (i_EndOffset >= i_RingBufferLength)
-    return false;
-  if (i_ByteCount == 0)
-    return true;
-  if (i_ByteCount > i_RingBufferLength)
-    return false;
-
-  if (i_ByteCount == i_RingBufferLength)
-  {
-    memset (i_pRingBuffer, i_Value, i_RingBufferLength);
-    return true;
-  }
-
-  if (i_ByteCount <= i_EndOffset)
-  {
-    memset (i_pRingBuffer + i_EndOffset - i_ByteCount, i_Value, i_ByteCount);
-    return true;
-  }
-
-  uint16_t sizeOf2ndBlock = i_ByteCount - i_EndOffset;
-  memset (i_pRingBuffer,                                       i_Value, i_EndOffset);
-  memset (i_pRingBuffer + i_RingBufferLength - sizeOf2ndBlock, i_Value, sizeOf2ndBlock);
-  return true;
-}
-
-//--------------------------------------------------------------------
 bool RingBuffer_GetBytesAndMovePtr (uint8_t*  i_pRingBuffer,
                                     uint16_t  i_RingBufferLength,
                                     uint8_t*& io_pCurrent,
@@ -105,6 +36,8 @@ bool RingBuffer_GetBytesAndMovePtr (uint8_t*  i_pRingBuffer,
   uint8_t* pAfterBuffer = i_pRingBuffer + i_RingBufferLength;
   if (io_pCurrent < i_pRingBuffer
   ||  io_pCurrent >= pAfterBuffer)
+    return false;
+  if (o_pDestination == 0)
     return false;
 
   if (i_ByteCount == 0)
@@ -136,6 +69,17 @@ bool RingBuffer_GetBytesAndMovePtr (uint8_t*  i_pRingBuffer,
   memcpy (o_pDestination + bytesUntilEnd, i_pRingBuffer, sizeOf2ndBlock);
   io_pCurrent = i_pRingBuffer + sizeOf2ndBlock;
   return true;
+}
+
+//--------------------------------------------------------------------
+bool RingBuffer_GetValueAndMovePtr (uint8_t*  i_pRingBuffer,
+                                    uint16_t  i_RingBufferLength,
+                                    uint8_t*& io_pCurrent,
+                                    bool&     o_Value)
+{
+  uint8_t value = 0;
+  return RingBuffer_GetBytesAndMovePtr (i_pRingBuffer, i_RingBufferLength, io_pCurrent, 1, &value);
+  o_Value = value != 0;
 }
 
 //--------------------------------------------------------------------
@@ -204,5 +148,185 @@ bool RingBuffer_IncrementPointer (uint8_t*  i_pRingBuffer,
   if (io_pCurrent < i_pRingBuffer
   ||  io_pCurrent >= i_pRingBuffer + i_RingBufferLength)
     io_pCurrent = i_pRingBuffer;
+  return true;
+}
+
+//--------------------------------------------------------------------
+bool RingBuffer_SetBytesAndMovePtr (uint8_t*  i_pRingBuffer,
+                                    uint16_t  i_RingBufferLength,
+                                    uint8_t*& io_pCurrent,
+                                    uint16_t  i_ByteCount,
+                                    uint8_t*  o_pSource)
+{
+  if (i_pRingBuffer == 0)
+    return false;
+  uint8_t* pAfterBuffer = i_pRingBuffer + i_RingBufferLength;
+  if (io_pCurrent < i_pRingBuffer
+  ||  io_pCurrent >= pAfterBuffer)
+    return false;
+  if (o_pSource == 0)
+    return false;
+
+  if (i_ByteCount == 0)
+    return true;
+
+  if (i_ByteCount == 1)
+  {
+    *io_pCurrent++ = *o_pSource;
+    if (io_pCurrent >= pAfterBuffer)
+      io_pCurrent = i_pRingBuffer;
+    return true;
+  }
+
+  if (i_ByteCount > i_RingBufferLength)
+    return false;
+
+  uint16_t bytesUntilEnd = pAfterBuffer - io_pCurrent;
+  if (i_ByteCount <= bytesUntilEnd)
+  {
+    memcpy (io_pCurrent, o_pSource, i_ByteCount);
+    io_pCurrent += i_ByteCount;
+    if (io_pCurrent >= pAfterBuffer)
+      io_pCurrent = i_pRingBuffer;
+    return true;
+  }
+
+  uint16_t sizeOf2ndBlock = i_ByteCount - bytesUntilEnd;
+  memcpy (io_pCurrent  , o_pSource                , bytesUntilEnd);
+  memcpy (i_pRingBuffer, o_pSource + bytesUntilEnd, sizeOf2ndBlock);
+  io_pCurrent = i_pRingBuffer + sizeOf2ndBlock;
+  return true;
+}
+
+//--------------------------------------------------------------------
+bool RingBuffer_SetValueAndMovePtr (uint8_t*  i_pRingBuffer,
+                                    uint16_t  i_RingBufferLength,
+                                    uint8_t*& io_pCurrent,
+                                    bool      i_Value)
+{
+  uint8_t value = i_Value ? 1 : 0;
+  return RingBuffer_GetBytesAndMovePtr (i_pRingBuffer, i_RingBufferLength, io_pCurrent, 1, &value);
+}
+
+//--------------------------------------------------------------------
+bool RingBuffer_SetValueAndMovePtr (uint8_t*  i_pRingBuffer,
+                                    uint16_t  i_RingBufferLength,
+                                    uint8_t*& io_pCurrent,
+                                    uint8_t   i_Value)
+{
+  return RingBuffer_GetBytesAndMovePtr (i_pRingBuffer, i_RingBufferLength, io_pCurrent, 1, &i_Value);
+}
+
+//--------------------------------------------------------------------
+bool RingBuffer_SetValueAndMovePtr (uint8_t*  i_pRingBuffer,
+                                    uint16_t  i_RingBufferLength,
+                                    uint8_t*& io_pCurrent,
+                                    int8_t    i_Value)
+{
+  return RingBuffer_GetBytesAndMovePtr (i_pRingBuffer, i_RingBufferLength, io_pCurrent, 1, (uint8_t*)&i_Value);
+}
+
+//--------------------------------------------------------------------
+bool RingBuffer_SetValueAndMovePtr (uint8_t*  i_pRingBuffer,
+                                    uint16_t  i_RingBufferLength,
+                                    uint8_t*& io_pCurrent,
+                                    uint16_t  i_Value)
+{
+  return RingBuffer_GetBytesAndMovePtr (i_pRingBuffer, i_RingBufferLength, io_pCurrent, 2, (uint8_t*)&i_Value);
+}
+
+//--------------------------------------------------------------------
+bool RingBuffer_SetValueAndMovePtr (uint8_t*  i_pRingBuffer,
+                                    uint16_t  i_RingBufferLength,
+                                    uint8_t*& io_pCurrent,
+                                    int16_t   i_Value)
+{
+  return RingBuffer_GetBytesAndMovePtr (i_pRingBuffer, i_RingBufferLength, io_pCurrent, 2, (uint8_t*)&i_Value);
+}
+
+//--------------------------------------------------------------------
+bool RingBuffer_SetValueAndMovePtr (uint8_t*  i_pRingBuffer,
+                                    uint16_t  i_RingBufferLength,
+                                    uint8_t*& io_pCurrent,
+                                    uint32_t  i_Value)
+{
+  return RingBuffer_GetBytesAndMovePtr (i_pRingBuffer, i_RingBufferLength, io_pCurrent, 4, (uint8_t*)&i_Value);
+}
+
+//--------------------------------------------------------------------
+bool RingBuffer_SetValueAndMovePtr (uint8_t*  i_pRingBuffer,
+                                    uint16_t  i_RingBufferLength,
+                                    uint8_t*& io_pCurrent,
+                                    int32_t   i_Value)
+{
+  return RingBuffer_GetBytesAndMovePtr (i_pRingBuffer, i_RingBufferLength, io_pCurrent, 4, (uint8_t*)&i_Value);
+}
+
+//--------------------------------------------------------------------
+bool RingBuffer_SetValue (uint8_t*  i_pRingBuffer,
+                          uint16_t  i_RingBufferLength,
+                          uint16_t  i_StartOffset,
+                          uint16_t  i_ByteCount,
+                          uint8_t   i_Value)
+{
+  if (i_pRingBuffer == 0)
+    return false;
+  if (i_StartOffset >= i_RingBufferLength)
+    return false;
+  if (i_ByteCount == 0)
+    return true;
+  if (i_ByteCount > i_RingBufferLength)
+    return false;
+
+  if (i_ByteCount == i_RingBufferLength)
+  {
+    memset (i_pRingBuffer, i_Value, i_RingBufferLength);
+    return true;
+  }
+
+  uint16_t bytesUntilEnd = i_RingBufferLength - i_StartOffset;
+  if (i_ByteCount <= bytesUntilEnd)
+  {
+    memset (i_pRingBuffer + i_StartOffset, i_Value, i_ByteCount);
+    return true;
+  }
+
+  uint16_t sizeOf2ndBlock = i_ByteCount - bytesUntilEnd;
+  memset (i_pRingBuffer + i_StartOffset, i_Value, bytesUntilEnd);
+  memset (i_pRingBuffer                , i_Value, sizeOf2ndBlock);
+  return true;
+}
+
+//--------------------------------------------------------------------
+bool RingBuffer_SetValueBackward (uint8_t*  i_pRingBuffer,
+                                  uint16_t  i_RingBufferLength,
+                                  uint16_t  i_EndOffset,
+                                  uint16_t  i_ByteCount,
+                                  uint8_t   i_Value)
+{
+  if (i_pRingBuffer == 0)
+    return false;
+  if (i_EndOffset >= i_RingBufferLength)
+    return false;
+  if (i_ByteCount == 0)
+    return true;
+  if (i_ByteCount > i_RingBufferLength)
+    return false;
+
+  if (i_ByteCount == i_RingBufferLength)
+  {
+    memset (i_pRingBuffer, i_Value, i_RingBufferLength);
+    return true;
+  }
+
+  if (i_ByteCount <= i_EndOffset)
+  {
+    memset (i_pRingBuffer + i_EndOffset - i_ByteCount, i_Value, i_ByteCount);
+    return true;
+  }
+
+  uint16_t sizeOf2ndBlock = i_ByteCount - i_EndOffset;
+  memset (i_pRingBuffer,                                       i_Value, i_EndOffset);
+  memset (i_pRingBuffer + i_RingBufferLength - sizeOf2ndBlock, i_Value, sizeOf2ndBlock);
   return true;
 }
