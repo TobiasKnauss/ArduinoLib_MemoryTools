@@ -1,5 +1,5 @@
 #######################################
-# Syntax Coloring Map For PushButton
+# Syntax Coloring Map For MemoryTools
 #######################################
 
 #######################################
@@ -12,11 +12,13 @@
 
 CheckMemoryAreasOverlap	KEYWORD2
 Memory_PrintLn	KEYWORD2
-RingBuffer_SetValue	KEYWORD2
-RingBuffer_SetValueBackward	KEYWORD2
 RingBuffer_GetBytesAndMovePtr	KEYWORD2
 RingBuffer_GetValueAndMovePtr	KEYWORD2
 RingBuffer_IncrementPointer	KEYWORD2
+RingBuffer_SetBytesAndMovePtr	KEYWORD2
+RingBuffer_SetValueAndMovePtr	KEYWORD2
+RingBuffer_SetValue	KEYWORD2
+RingBuffer_SetValueBackward	KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)
