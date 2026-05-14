@@ -263,11 +263,11 @@ bool RingBuffer_SetValueAndMovePtr (uint8_t*  i_pRingBuffer,
 }
 
 //--------------------------------------------------------------------
-bool RingBuffer_SetValue (uint8_t*  i_pRingBuffer,
-                          uint16_t  i_RingBufferLength,
-                          uint16_t  i_StartOffset,
-                          uint16_t  i_ByteCount,
-                          uint8_t   i_Value)
+bool RingBuffer_SetValue_FromStart (uint8_t*  i_pRingBuffer,
+                                    uint16_t  i_RingBufferLength,
+                                    uint16_t  i_StartOffset,
+                                    uint16_t  i_ByteCount,
+                                    uint8_t   i_Value)
 {
   if (i_pRingBuffer == 0)
     return false;
@@ -298,35 +298,69 @@ bool RingBuffer_SetValue (uint8_t*  i_pRingBuffer,
 }
 
 //--------------------------------------------------------------------
-bool RingBuffer_SetValueBackward (uint8_t*  i_pRingBuffer,
-                                  uint16_t  i_RingBufferLength,
-                                  uint16_t  i_EndOffset,
-                                  uint16_t  i_ByteCount,
+bool RingBuffer_SetValue_FromEnd (uint8_t*  i_pRingBuffer,
+                                  uint16_t  i_RingBufferLength,   // ex.1: 8    ex.2: 8
+                                  uint16_t  i_EndOffset,          // ex.1: 6    ex.2: 3
+                                  uint16_t  i_ByteCount,          // ex.1: 3    ex.2: 6
                                   uint8_t   i_Value)
 {
   if (i_pRingBuffer == 0)
     return false;
-  if (i_EndOffset >= i_RingBufferLength)
+  if (i_EndOffset >= i_RingBufferLength)  // ex.1,2: i_RingBufferLength == 8  --> i_EndOffset may be 0 to 7.
     return false;
-  if (i_ByteCount == 0)
+  if (i_ByteCount == 0)  // nothing to do.
     return true;
-  if (i_ByteCount > i_RingBufferLength)
+  if (i_ByteCount > i_RingBufferLength)  // cannot write more values than the buffer actually has.
     return false;
 
-  if (i_ByteCount == i_RingBufferLength)
+  if (i_ByteCount == i_RingBufferLength)  // write the entire buffer
   {
     memset (i_pRingBuffer, i_Value, i_RingBufferLength);
     return true;
   }
 
-  if (i_ByteCount <= i_EndOffset)
+  if (i_ByteCount <= i_EndOffset)  // the start is before the end, write in one pass (like in ex.1)
   {
-    memset (i_pRingBuffer + i_EndOffset - i_ByteCount, i_Value, i_ByteCount);
+    memset (i_pRingBuffer + i_EndOffset - i_ByteCount, i_Value, i_ByteCount);  // ex.1:  start offset = 6 - 3 = 3  --> writing the bytes 3,4,5.
     return true;
   }
 
-  uint16_t sizeOf2ndBlock = i_ByteCount - i_EndOffset;
-  memset (i_pRingBuffer,                                       i_Value, i_EndOffset);
-  memset (i_pRingBuffer + i_RingBufferLength - sizeOf2ndBlock, i_Value, sizeOf2ndBlock);
+  // the start is after the end, write in two passes (like in ex.2)
+  uint16_t sizeOf2ndBlock = i_ByteCount - i_EndOffset;  // ex.2: 6 - 3 = 3
+  memset (i_pRingBuffer,                                       i_Value, i_EndOffset);     // ex.2: writing the bytes 0,1,2
+  memset (i_pRingBuffer + i_RingBufferLength - sizeOf2ndBlock, i_Value, sizeOf2ndBlock);  // ex.2: start offset = 8 - 3 = 5  --> writing the bytes 5,6,7.
+  return true;
+}
+
+//--------------------------------------------------------------------
+bool RingBuffer_SetValue_StartToEnd (uint8_t*  i_pRingBuffer,
+                                     uint16_t  i_RingBufferLength,   // ex.1: 8    ex.2: 8
+                                     uint16_t  i_StartOffset,        // ex.1: 3    ex.2: 6
+                                     uint16_t  i_EndOffset,          // ex.1: 6    ex.2: 3
+                                     uint8_t   i_Value)
+{
+  if (i_pRingBuffer == 0)
+    return false;
+  if (i_StartOffset >= i_RingBufferLength)  // ex.1,2: i_RingBufferLength == 8  --> i_StartOffset may be 0 to 7.
+    return false;
+  if (i_EndOffset >= i_RingBufferLength)  // ex.1,2: i_RingBufferLength == 8  --> i_EndOffset may be 0 to 7.
+    return false;
+
+  if (i_StartOffset == i_EndOffset)  // write the entire buffer
+  {
+    memset (i_pRingBuffer, i_Value, i_RingBufferLength);
+    return true;
+  }
+
+  if (i_EndOffset > i_StartOffset)  // the start is before the end, write in one pass (like in ex.1)
+  {
+    memset (i_pRingBuffer + i_StartOffset, i_Value, i_EndOffset - i_StartOffset);  // ex.1: start offset = 3, length = 6 - 3 = 3 -->  writing the bytes 3,4,5
+    return true;
+  }
+
+  // the start is after the end, write in two passes (like in ex.2)
+  uint16_t bytesUntilEnd = i_RingBufferLength - i_StartOffset;    // ex.2: 8 - 6 = 2
+  memset (i_pRingBuffer + i_StartOffset, i_Value, bytesUntilEnd); // ex.2: writing the bytes 6,7.
+  memset (i_pRingBuffer                , i_Value, i_EndOffset);   // ex.2: writing the bytes 0,1,2.
   return true;
 }

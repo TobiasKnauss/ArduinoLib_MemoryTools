@@ -17,8 +17,9 @@ RingBuffer_GetValueAndMovePtr	KEYWORD2
 RingBuffer_IncrementPointer	KEYWORD2
 RingBuffer_SetBytesAndMovePtr	KEYWORD2
 RingBuffer_SetValueAndMovePtr	KEYWORD2
-RingBuffer_SetValue	KEYWORD2
-RingBuffer_SetValueBackward	KEYWORD2
+RingBuffer_SetValue_FromEnd	KEYWORD2
+RingBuffer_SetValue_FromStart	KEYWORD2
+RingBuffer_SetValue_StartToEnd	KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)

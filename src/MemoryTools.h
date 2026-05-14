@@ -145,22 +145,35 @@ bool RingBuffer_SetValueAndMovePtr (uint8_t*  i_pRingBuffer,
 // i_StartOffset:       The relative position in the ring buffer from which on the value is written.
 // i_ByteCount:         The number of bytes that are written in the buffer.
 // i_Value:             The value that is written into the buffer.
-bool RingBuffer_SetValue (uint8_t*  i_pRingBuffer,
-                          uint16_t  i_RingBufferLength,
-                          uint16_t  i_StartOffset,
-                          uint16_t  i_ByteCount,
-                          uint8_t   i_Value);
+bool RingBuffer_SetValue_FromStart (uint8_t*  i_pRingBuffer,
+                                    uint16_t  i_RingBufferLength,
+                                    uint16_t  i_StartOffset,
+                                    uint16_t  i_ByteCount,
+                                    uint8_t   i_Value);
 
 // Write the given value to the specified number of bytes in the ring buffer, ending at the given buffer position.
 // i_pRingBuffer:       The start address of the ring buffer.
 // i_RingBufferLength:  The length of the ring buffer.
-// i_EndOffset:         The relative position in the ring buffer up to which the value is written.
+// i_EndOffset:         The relative position in the ring buffer up to which the value is written. This position is NOT included!
 // i_ByteCount:         The number of bytes that are written in the buffer.
 // i_Value:             The value that is written into the buffer.
-bool RingBuffer_SetValueBackward (uint8_t*  i_pRingBuffer,
+bool RingBuffer_SetValue_FromEnd (uint8_t*  i_pRingBuffer,
                                   uint16_t  i_RingBufferLength,
                                   uint16_t  i_EndOffset,
                                   uint16_t  i_ByteCount,
                                   uint8_t   i_Value);
+
+// Write the given value to the ring buffer, starting and ending at the given buffer positions.
+// i_pRingBuffer:       The start address of the ring buffer.
+// i_RingBufferLength:  The length of the ring buffer.
+// i_StartOffset:       The relative position in the ring buffer from which on the value is written.
+// i_EndOffset:         The relative position in the ring buffer up to which the value is written. This position is NOT included!
+//                      If start offset == end offset, the entire buffer will be written.
+// i_Value:             The value that is written into the buffer.
+bool RingBuffer_SetValue_StartToEnd (uint8_t*  i_pRingBuffer,
+                                     uint16_t  i_RingBufferLength,
+                                     uint16_t  i_StartOffset,
+                                     uint16_t  i_EndOffset,
+                                     uint8_t   i_Value);
 
 #endif
