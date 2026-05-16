@@ -11,6 +11,7 @@
 #######################################
 
 CheckMemoryAreasOverlap	KEYWORD2
+DeleteObject	KEYWORD2
 Memory_PrintLn	KEYWORD2
 RingBuffer_GetBytesAndMovePtr	KEYWORD2
 RingBuffer_GetValueAndMovePtr	KEYWORD2

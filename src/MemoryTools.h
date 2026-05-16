@@ -13,6 +13,11 @@ bool CheckMemoryAreasOverlap (uint8_t* i_pArea1,
                               uint8_t* i_pArea2,
                               uint16_t i_Area2Length);
 
+// Delete the object if it exists and set the pointer to NULL.
+// io_pObject: The pointer to the object that will be deleted.
+template <typename T>
+void DeleteObject (T& io_pObject);
+
 // Print the hexadecimal values of the specified memory block.
 // i_pMemory: The start address of the memory block.
 // i_Length:  The length of the memory block.
@@ -25,7 +30,7 @@ bool RingBuffer_GetBytesAndMovePtr (uint8_t*  i_pRingBuffer,
                                     uint16_t  i_RingBufferLength,
                                     uint8_t*& io_pCurrent,
                                     uint16_t  i_ByteCount,
-                                    uint8_t*  o_pDestination);
+                                    uint8_t*  i_pDestination);
 
 // Get a BOOL value from the ring buffer and move the pointer forward.
 // If the end of the ring buffer is reached, wrap the pointer around to the buffer start.
@@ -88,7 +93,7 @@ bool RingBuffer_SetBytesAndMovePtr (uint8_t*  i_pRingBuffer,
                                     uint16_t  i_RingBufferLength,
                                     uint8_t*& io_pCurrent,
                                     uint16_t  i_ByteCount,
-                                    uint8_t*  o_pSource);
+                                    uint8_t*  i_pSource);
 
 // Put a BOOL value into the ring buffer and move the pointer forward.
 // If the end of the ring buffer is reached, wrap the pointer around to the buffer start.
