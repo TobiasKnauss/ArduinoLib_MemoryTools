@@ -16,7 +16,12 @@ bool CheckMemoryAreasOverlap (uint8_t* i_pArea1,
 // Delete the object if it exists and set the pointer to NULL.
 // io_pObject: The pointer to the object that will be deleted.
 template <typename T>
-void DeleteObject (T& io_pObject);
+void DeleteObject (T& io_pObject)
+{
+  delete (io_pObject);
+  io_pObject = nullptr;
+}
+
 
 // Print the hexadecimal values of the specified memory block.
 // i_pMemory: The start address of the memory block.

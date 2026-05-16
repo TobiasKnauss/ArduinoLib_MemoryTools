@@ -20,15 +20,6 @@ bool CheckMemoryAreasOverlap (uint8_t* i_pArea1,
 }
 
 //--------------------------------------------------------------------
-template <typename T>
-void DeleteObject (T& io_pObject)
-{
-  if (io_pObject != nullptr)
-    delete (io_pObject);
-  io_pObject = nullptr;
-}
-
-//--------------------------------------------------------------------
 void Memory_PrintLn (uint8_t* i_pMemory,
                      uint16_t i_Length)
 {
