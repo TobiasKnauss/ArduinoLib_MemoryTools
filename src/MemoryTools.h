@@ -22,6 +22,11 @@ void DeleteObject (T& io_pObject)
   io_pObject = nullptr;
 }
 
+// Allocate the desired amount of memory for a byte-array, set the given default value on the entire memory and return the pointer to that memory.
+// If the pointer is not zero at the beginning or if the allocation fails, the return value is FALSE.
+bool Memory_Allocate (uint8_t*& o_pMemory,
+                      uint16_t  i_MemoryLength,
+                      uint8_t   i_DefaultValue);
 
 // Print the hexadecimal values of the specified memory block.
 // i_pMemory: The start address of the memory block.

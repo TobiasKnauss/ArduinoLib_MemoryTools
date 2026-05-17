@@ -20,6 +20,22 @@ bool CheckMemoryAreasOverlap (uint8_t* i_pArea1,
 }
 
 //--------------------------------------------------------------------
+bool Memory_Allocate (uint8_t*& o_pMemory,
+                      uint16_t  i_MemoryLength,
+                      uint8_t   i_DefaultValue)
+{
+  if (o_pMemory != nullptr)  // memory is allocated already
+    return false;
+
+  o_pMemory = new uint8_t[i_MemoryLength];
+  if (o_pMemory == nullptr)
+    return false;
+
+  memset (o_pMemory, i_DefaultValue, i_MemoryLength);
+  return true;
+}
+
+//--------------------------------------------------------------------
 void Memory_PrintLn (uint8_t* i_pMemory,
                      uint16_t i_Length)
 {
