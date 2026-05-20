@@ -14,6 +14,18 @@ CheckMemoryAreasOverlap	KEYWORD2
 DeleteObject	KEYWORD2
 Memory_Allocate	KEYWORD2
 Memory_PrintLn	KEYWORD2
+
+EEPROM_CalcChecksumCRC16	KEYWORD2
+EEPROM_CheckAddress	KEYWORD2
+EEPROM_CheckAddressRange	KEYWORD2
+EEPROM_GetBytesAndMovePtr	KEYWORD2
+EEPROM_GetValueAndMovePtr	KEYWORD2
+EEPROM_SetBytesAndMovePtr	KEYWORD2
+EEPROM_SetValueAndMovePtr	KEYWORD2
+EEPROM_SetValue_FromStart	KEYWORD2
+EEPROM_SetValue_FromEnd	KEYWORD2
+EEPROM_SetValue_StartToEnd	KEYWORD2
+
 RingBuffer_GetBytesAndMovePtr	KEYWORD2
 RingBuffer_GetValueAndMovePtr	KEYWORD2
 RingBuffer_IncrementPointer	KEYWORD2
