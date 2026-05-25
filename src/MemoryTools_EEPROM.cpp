@@ -9,11 +9,13 @@ uint16_t EEPROM_CalcChecksumCRC16 (uint16_t i_StartAddress,
 {
   if (!EEPROM_CheckAddressRange (i_StartAddress, i_ByteCount))
     return 0;
+  if (i_ByteCount <= 0)
+    return 0;
 
   FastCRC16 crc16;
-  uint8_t  byteValue = 0;
+  uint8_t  byteValue = EEPROM.read (i_StartAddress);
   uint16_t checksum = crc16.modbus (&byteValue, 0);
-  for (uint16_t index = 0; index < i_ByteCount; index++)
+  for (uint16_t index = 1; index < i_ByteCount; index++)
   {
     byteValue = EEPROM.read (i_StartAddress + index);
     checksum = crc16.modbus_upd (&byteValue, 1);
