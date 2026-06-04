@@ -15,6 +15,8 @@ DeleteObject	KEYWORD2
 Memory_Allocate	KEYWORD2
 Memory_PrintLn	KEYWORD2
 
+ByteOrder_Invert	KEYWORD2
+
 EEPROM_CalcChecksumCRC16	KEYWORD2
 EEPROM_CheckAddress	KEYWORD2
 EEPROM_CheckAddressRange	KEYWORD2

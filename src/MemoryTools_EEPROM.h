@@ -6,6 +6,7 @@
 uint16_t EEPROM_CalcChecksumCRC16 (uint16_t i_StartAddress,
                                    uint16_t i_ByteCount);
 
+// Check if the given address is a valid address in the EEPROM, not exceeding the size of the EEPROM.
 bool EEPROM_CheckAddress (uint16_t i_Address);
 
 bool EEPROM_CheckAddressRange ( uint16_t  i_Address,

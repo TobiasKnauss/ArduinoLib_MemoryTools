@@ -1,6 +1,7 @@
 #include "MemoryTools.h"
-#include "MemoryTools_RingBuffer.h"
+#include "MemoryTools_ByteOrder.h"
 #include "MemoryTools_EEPROM.h"
+#include "MemoryTools_RingBuffer.h"
 
 class CTest
 {
@@ -44,6 +45,16 @@ void setup ()
 
   //--------------------------------------------------------------------
 
+  ByteOrderInvert (m_ValueI16);
+
+  ByteOrderInvert (m_ValueUI16);
+
+  ByteOrderInvert (m_ValueI32);
+
+  ByteOrderInvert (m_ValueUI32);
+
+  //--------------------------------------------------------------------
+
   RingBuffer_GetBytesAndMovePtr (m_pRingBuffer, m_RingBufferLength, m_pCurrent, m_ByteCount, m_pDestination);
 
   RingBuffer_GetValueAndMovePtr (m_pRingBuffer, m_RingBufferLength, m_pCurrent, m_ValueBOOL);
@@ -60,7 +71,7 @@ void setup ()
 
   RingBuffer_GetValueAndMovePtr (m_pRingBuffer, m_RingBufferLength, m_pCurrent, m_ValueI32);
 
-  RingBuffer_IncrementPointer (m_pRingBuffer, m_RingBufferLength, m_pCurrent); 
+  RingBuffer_IncrementPointer (m_pRingBuffer, m_RingBufferLength, m_pCurrent);
 
   RingBuffer_SetBytesAndMovePtr (m_pRingBuffer, m_RingBufferLength, m_pCurrent, m_ByteCount, m_pSource);
 
