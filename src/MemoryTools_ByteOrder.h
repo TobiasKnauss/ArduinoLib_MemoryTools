@@ -3,16 +3,28 @@
 
 #include <Arduino.h>
 
-// Invert the order of the bytes of the given value.
-int16_t ByteOrder_Invert (int16_t i_Data);
+namespace MemoryTools
+{
+  class ByteOrder
+  {
+  private:
 
-// Invert the order of the bytes of the given value.
-uint16_t ByteOrder_Invert (uint16_t i_Data);
+    ByteOrder () = delete;
 
-// Invert the order of the bytes of the given value.
-int32_t ByteOrder_Invert (int32_t i_Data);
+  public:
 
-// Invert the order of the bytes of the given value.
-uint32_t ByteOrder_Invert (uint32_t i_Data);
+    // Invert the order of the bytes of the given value.
+    static int16_t Invert (int16_t i_Data);
+
+    // Invert the order of the bytes of the given value.
+    static uint16_t Invert (uint16_t i_Data);
+
+    // Invert the order of the bytes of the given value.
+    static int32_t Invert (int32_t i_Data);
+
+    // Invert the order of the bytes of the given value.
+    static uint32_t Invert (uint32_t i_Data);
+  };
+}
 
 #endif
