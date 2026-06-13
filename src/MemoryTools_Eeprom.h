@@ -13,8 +13,17 @@ namespace MemoryTools
 
   public:
 
-    static uint16_t CalcChecksumCRC16 ( uint16_t i_StartAddress,
-                                        uint16_t i_ByteCount);
+    static bool CalcChecksumCRC16_From (uint16_t  i_StartAddress,
+                                        uint16_t  i_ByteCount,
+                                        uint16_t& o_Checksum);
+
+    static bool CalcChecksumCRC16_To (uint16_t  i_EndAddress,
+                                      uint16_t  i_ByteCount,
+                                      uint16_t& o_Checksum);
+
+    static bool CalcChecksumCRC16_FromTo (uint16_t  i_StartAddress,
+                                          uint16_t  i_EndAddress,
+                                          uint16_t& o_Checksum);
 
     // Check if the given address is a valid address in the EEPROM, not exceeding the size of the EEPROM.
     static bool CheckAddress (uint16_t i_Address);
@@ -102,26 +111,26 @@ namespace MemoryTools
     // i_StartAddress:      The address in the EEPROM from which on the value is written.
     // i_ByteCount:         The number of bytes that are written in the EEPROM.
     // i_Value:             The value that is written into the EEPROM.
-    static bool WriteRange_FromStart (uint16_t  i_StartAddress,
-                                      uint16_t  i_ByteCount,
-                                      uint8_t   i_Value);
+    static bool WriteRange_From ( uint16_t  i_StartAddress,
+                                  uint16_t  i_ByteCount,
+                                  uint8_t   i_Value);
 
     // Write the given value to the specified number of bytes in the EEPROM, ending at the given address.
     // i_EndAddress:        The address in the EEPROM up to which the value is written. This address is NOT included!
     // i_ByteCount:         The number of bytes that are written in the EEPROM.
     // i_Value:             The value that is written into the EEPROM.
-    static bool WriteRange_ToEnd (uint16_t  i_EndAddress,
-                                  uint16_t  i_ByteCount,
-                                  uint8_t   i_Value);
+    static bool WriteRange_To ( uint16_t  i_EndAddress,
+                                uint16_t  i_ByteCount,
+                                uint8_t   i_Value);
 
     // Write the given value to the EEPROM, starting and ending at the given address.
     // i_StartAddress:  The address in the EEPROM from which on the value is written.
     // i_EndAddress:    The address in the EEPROM up to which the value is written. This position is NOT included!
     //                  If start address == end address, nothing will be written.
     // i_Value:         The value that is written into the EEPROM.
-    static bool WriteRange_StartToEnd ( uint16_t  i_StartAddress,
-                                        uint16_t  i_EndAddress,
-                                        uint8_t   i_Value);
+    static bool WriteRange_FromTo ( uint16_t  i_StartAddress,
+                                    uint16_t  i_EndAddress,
+                                    uint8_t   i_Value);
   };
 }
 

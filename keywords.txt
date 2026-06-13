@@ -17,16 +17,18 @@ DeleteObject	KEYWORD2
 
 Invert	KEYWORD2
 
-CalcChecksumCRC16	KEYWORD2
+CalcChecksumCRC16_From	KEYWORD2
+CalcChecksumCRC16_To	KEYWORD2
+CalcChecksumCRC16_FromTo	KEYWORD2
 CheckAddress	KEYWORD2
 CheckAddressRange	KEYWORD2
 ReadBytesAndMovePtr	KEYWORD2
 ReadValueAndMovePtr	KEYWORD2
 WriteBytesAndMovePtr	KEYWORD2
 WriteValueAndMovePtr	KEYWORD2
-WriteRange_FromStart	KEYWORD2
-WriteRange_ToEnd	KEYWORD2
-WriteRange_StartToEnd	KEYWORD2
+WriteRange_From	KEYWORD2
+WriteRange_To	KEYWORD2
+WriteRange_FromTo	KEYWORD2
 
 Allocate	KEYWORD2
 CheckAreasOverlap	KEYWORD2

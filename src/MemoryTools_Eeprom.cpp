@@ -7,23 +7,51 @@
 using namespace MemoryTools;
 
 //--------------------------------------------------------------------
-uint16_t Eeprom::CalcChecksumCRC16 (uint16_t i_StartAddress,
-                                    uint16_t i_ByteCount)
+bool Eeprom::CalcChecksumCRC16_From ( uint16_t  i_StartAddress,
+                                      uint16_t  i_ByteCount,
+                                      uint16_t& o_Checksum)
 {
   if (!CheckAddressRange (i_StartAddress, i_ByteCount))
-    return 0;
+    return false;
+  o_Checksum = 0;
   if (i_ByteCount <= 0)
-    return 0;
+    return true;
 
   FastCRC16 crc16;
-  uint8_t  byteValue = EEPROM.read (i_StartAddress);
-  uint16_t checksum = crc16.modbus (&byteValue, 1);
+  uint8_t byteValue = EEPROM.read (i_StartAddress);
+  o_Checksum = crc16.modbus (&byteValue, 1);
   for (uint16_t index = 1; index < i_ByteCount; index++)
   {
     byteValue = EEPROM.read (i_StartAddress + index);
-    checksum = crc16.modbus_upd (&byteValue, 1);
+    o_Checksum = crc16.modbus_upd (&byteValue, 1);
   }
-  return checksum;
+  return true;
+}
+
+//--------------------------------------------------------------------
+bool Eeprom::CalcChecksumCRC16_To ( uint16_t  i_EndAddress,
+                                    uint16_t  i_ByteCount,
+                                    uint16_t& o_Checksum)
+{
+  if (i_ByteCount > i_EndAddress)
+    return false;
+
+  return CalcChecksumCRC16_From ( i_EndAddress - i_ByteCount,
+                                  i_ByteCount,
+                                  o_Checksum);
+}
+
+//--------------------------------------------------------------------
+bool Eeprom::CalcChecksumCRC16_FromTo ( uint16_t  i_StartAddress,
+                                        uint16_t  i_EndAddress,
+                                        uint16_t& o_Checksum)
+{
+  if (i_StartAddress > i_EndAddress)
+    return false;
+
+  return CalcChecksumCRC16_From ( i_StartAddress,
+                                  i_EndAddress - i_StartAddress,
+                                  o_Checksum);
 }
 
 //--------------------------------------------------------------------
@@ -40,7 +68,7 @@ bool Eeprom::CheckAddressRange (uint16_t  i_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::ReadBytesAndMovePtr ( uint16_t& io_Address,
+bool Eeprom::ReadBytesAndMovePtr (uint16_t& io_Address,
                                   uint16_t  i_ByteCount,
                                   uint8_t*  i_pDestination,
                                   bool      i_InvertByteOrder)
@@ -296,9 +324,9 @@ bool Eeprom::WriteValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::WriteRange_FromStart ( uint16_t  i_StartAddress,
-                                    uint16_t  i_ByteCount,
-                                    uint8_t   i_Value)
+bool Eeprom::WriteRange_From (uint16_t  i_StartAddress,
+                              uint16_t  i_ByteCount,
+                              uint8_t   i_Value)
 {
   if (!CheckAddressRange (i_StartAddress, i_ByteCount))
     return false;
@@ -309,21 +337,27 @@ bool Eeprom::WriteRange_FromStart ( uint16_t  i_StartAddress,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::WriteRange_ToEnd ( uint16_t  i_EndAddress,
-                                uint16_t  i_ByteCount,
-                                uint8_t   i_Value)
+bool Eeprom::WriteRange_To (uint16_t  i_EndAddress,
+                            uint16_t  i_ByteCount,
+                            uint8_t   i_Value)
 {
-  return WriteRange_FromStart ( i_EndAddress - i_ByteCount,
-                                i_ByteCount,
-                                i_Value);
+  if (i_ByteCount > i_EndAddress)
+    return false;
+
+  return WriteRange_From (i_EndAddress - i_ByteCount,
+                          i_ByteCount,
+                          i_Value);
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::WriteRange_StartToEnd (uint16_t  i_StartAddress,
-                                  uint16_t  i_EndAddress,
-                                  uint8_t   i_Value)
+bool Eeprom::WriteRange_FromTo (uint16_t  i_StartAddress,
+                                uint16_t  i_EndAddress,
+                                uint8_t   i_Value)
 {
-  return WriteRange_FromStart ( i_StartAddress,
-                                i_EndAddress - i_StartAddress,
-                                i_Value);
+  if (i_StartAddress > i_EndAddress)
+    return false;
+
+  return WriteRange_From (i_StartAddress,
+                          i_EndAddress - i_StartAddress,
+                          i_Value);
 }
