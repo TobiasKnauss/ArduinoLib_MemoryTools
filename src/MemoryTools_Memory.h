@@ -29,10 +29,30 @@ namespace MemoryTools
                                     uint8_t* i_pArea2,
                                     uint16_t i_Area2Length);
 
-    // Print the hexadecimal values of the specified memory block.
+    // Print the hexadecimal values of the specified memory block to the serial port.
+    // i_pMemory: The start address of the memory block.
+    // i_Length:  The length of the memory block.
+    static void Print ( uint8_t* i_pMemory,
+                        uint16_t i_Length);
+
+    // Print the hexadecimal values of the specified memory block to the specified output.
+    // i_pMemory: The start address of the memory block.
+    // i_Length:  The length of the memory block.
+    static void Print ( Stream*  i_pOutput,
+                        uint8_t* i_pMemory,
+                        uint16_t i_Length);
+
+    // Print the hexadecimal values of the specified memory block to the serial port, ending with new-line.
     // i_pMemory: The start address of the memory block.
     // i_Length:  The length of the memory block.
     static void PrintLn ( uint8_t* i_pMemory,
+                          uint16_t i_Length);
+
+    // Print the hexadecimal values of the specified memory block to the specified output, ending with new-line.
+    // i_pMemory: The start address of the memory block.
+    // i_Length:  The length of the memory block.
+    static void PrintLn ( Stream*  i_pOutput,
+                          uint8_t* i_pMemory,
                           uint16_t i_Length);
   };
 }

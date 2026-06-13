@@ -34,7 +34,10 @@ void setup ()
   CTest* pTest = new CTest ();
   DeleteObject (pTest);
 
-  Memory::PrintLn (m_pMemory1, m_Length1);
+  Memory::Print   (         m_pMemory1, m_Length1);
+  Memory::Print   (&Serial, m_pMemory1, m_Length1);
+  Memory::PrintLn (         m_pMemory1, m_Length1);
+  Memory::PrintLn (&Serial, m_pMemory1, m_Length1);
 
   //--------------------------------------------------------------------
 
