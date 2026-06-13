@@ -17,7 +17,7 @@ uint16_t Eeprom::CalcChecksumCRC16 (uint16_t i_StartAddress,
 
   FastCRC16 crc16;
   uint8_t  byteValue = EEPROM.read (i_StartAddress);
-  uint16_t checksum = crc16.modbus (&byteValue, 0);
+  uint16_t checksum = crc16.modbus (&byteValue, 1);
   for (uint16_t index = 1; index < i_ByteCount; index++)
   {
     byteValue = EEPROM.read (i_StartAddress + index);
@@ -40,7 +40,7 @@ bool Eeprom::CheckAddressRange (uint16_t  i_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::GetBytesAndMovePtr ( uint16_t& io_Address,
+bool Eeprom::ReadBytesAndMovePtr ( uint16_t& io_Address,
                                   uint16_t  i_ByteCount,
                                   uint8_t*  i_pDestination,
                                   bool      i_InvertByteOrder)
@@ -65,7 +65,7 @@ bool Eeprom::GetBytesAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
+bool Eeprom::ReadValueAndMovePtr (uint16_t& io_Address,
                                   bool&     o_Value)
 {
   uint8_t byteCount = sizeof (o_Value);
@@ -78,7 +78,7 @@ bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
+bool Eeprom::ReadValueAndMovePtr (uint16_t& io_Address,
                                   uint8_t&  o_Value)
 {
   uint8_t byteCount = sizeof (o_Value);
@@ -91,7 +91,7 @@ bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
+bool Eeprom::ReadValueAndMovePtr (uint16_t& io_Address,
                                   int8_t&   o_Value)
 {
   uint8_t byteCount = sizeof (o_Value);
@@ -104,7 +104,7 @@ bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
+bool Eeprom::ReadValueAndMovePtr (uint16_t& io_Address,
                                   uint16_t& o_Value,
                                   bool      i_InvertByteOrder)
 {
@@ -120,7 +120,7 @@ bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
+bool Eeprom::ReadValueAndMovePtr (uint16_t& io_Address,
                                   int16_t&  o_Value,
                                   bool      i_InvertByteOrder)
 {
@@ -136,7 +136,7 @@ bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
+bool Eeprom::ReadValueAndMovePtr (uint16_t& io_Address,
                                   uint32_t& o_Value,
                                   bool      i_InvertByteOrder)
 {
@@ -152,7 +152,7 @@ bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
+bool Eeprom::ReadValueAndMovePtr (uint16_t& io_Address,
                                   int32_t&  o_Value,
                                   bool      i_InvertByteOrder)
 {
@@ -168,10 +168,10 @@ bool Eeprom::GetValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::SetBytesAndMovePtr ( uint16_t& io_Address,
-                                  uint16_t  i_ByteCount,
-                                  uint8_t*  i_pSource,
-                                  bool      i_InvertByteOrder)
+bool Eeprom::WriteBytesAndMovePtr ( uint16_t& io_Address,
+                                    uint16_t  i_ByteCount,
+                                    uint8_t*  i_pSource,
+                                    bool      i_InvertByteOrder)
 {
   if (i_pSource == nullptr)
     return false;
@@ -193,8 +193,8 @@ bool Eeprom::SetBytesAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::SetValueAndMovePtr ( uint16_t& io_Address,
-                                  bool      i_Value)
+bool Eeprom::WriteValueAndMovePtr ( uint16_t& io_Address,
+                                    bool      i_Value)
 {
   uint8_t byteCount = sizeof (i_Value);
   if (!CheckAddressRange (io_Address, byteCount))
@@ -206,8 +206,8 @@ bool Eeprom::SetValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::SetValueAndMovePtr ( uint16_t& io_Address,
-                                  uint8_t   i_Value)
+bool Eeprom::WriteValueAndMovePtr ( uint16_t& io_Address,
+                                    uint8_t   i_Value)
 {
   uint8_t byteCount = sizeof (i_Value);
   if (!CheckAddressRange (io_Address, byteCount))
@@ -219,8 +219,8 @@ bool Eeprom::SetValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::SetValueAndMovePtr ( uint16_t& io_Address,
-                                  int8_t    i_Value)
+bool Eeprom::WriteValueAndMovePtr ( uint16_t& io_Address,
+                                    int8_t    i_Value)
 {
   uint8_t byteCount = sizeof (i_Value);
   if (!CheckAddressRange (io_Address, byteCount))
@@ -232,25 +232,9 @@ bool Eeprom::SetValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::SetValueAndMovePtr ( uint16_t& io_Address,
-                                  uint16_t  i_Value,
-                                  bool      i_InvertByteOrder)
-{
-  uint8_t byteCount = sizeof (i_Value);
-  if (!CheckAddressRange (io_Address, byteCount))
-    return false;
-
-  if (i_InvertByteOrder)
-    i_Value = ByteOrder::Invert (i_Value);
-  EEPROM.put (io_Address, i_Value);
-  io_Address += byteCount;
-  return true;
-}
-
-//--------------------------------------------------------------------
-bool Eeprom::SetValueAndMovePtr ( uint16_t& io_Address,
-                                  int16_t   i_Value,
-                                  bool      i_InvertByteOrder)
+bool Eeprom::WriteValueAndMovePtr ( uint16_t& io_Address,
+                                    uint16_t  i_Value,
+                                    bool      i_InvertByteOrder)
 {
   uint8_t byteCount = sizeof (i_Value);
   if (!CheckAddressRange (io_Address, byteCount))
@@ -264,9 +248,9 @@ bool Eeprom::SetValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::SetValueAndMovePtr ( uint16_t& io_Address,
-                                  uint32_t  i_Value,
-                                  bool      i_InvertByteOrder)
+bool Eeprom::WriteValueAndMovePtr ( uint16_t& io_Address,
+                                    int16_t   i_Value,
+                                    bool      i_InvertByteOrder)
 {
   uint8_t byteCount = sizeof (i_Value);
   if (!CheckAddressRange (io_Address, byteCount))
@@ -280,9 +264,9 @@ bool Eeprom::SetValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::SetValueAndMovePtr ( uint16_t& io_Address,
-                                  int32_t   i_Value,
-                                  bool      i_InvertByteOrder)
+bool Eeprom::WriteValueAndMovePtr ( uint16_t& io_Address,
+                                    uint32_t  i_Value,
+                                    bool      i_InvertByteOrder)
 {
   uint8_t byteCount = sizeof (i_Value);
   if (!CheckAddressRange (io_Address, byteCount))
@@ -296,9 +280,25 @@ bool Eeprom::SetValueAndMovePtr ( uint16_t& io_Address,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::SetValue_FromStart ( uint16_t  i_StartAddress,
-                                  uint16_t  i_ByteCount,
-                                  uint8_t   i_Value)
+bool Eeprom::WriteValueAndMovePtr ( uint16_t& io_Address,
+                                    int32_t   i_Value,
+                                    bool      i_InvertByteOrder)
+{
+  uint8_t byteCount = sizeof (i_Value);
+  if (!CheckAddressRange (io_Address, byteCount))
+    return false;
+
+  if (i_InvertByteOrder)
+    i_Value = ByteOrder::Invert (i_Value);
+  EEPROM.put (io_Address, i_Value);
+  io_Address += byteCount;
+  return true;
+}
+
+//--------------------------------------------------------------------
+bool Eeprom::WriteRange_FromStart ( uint16_t  i_StartAddress,
+                                    uint16_t  i_ByteCount,
+                                    uint8_t   i_Value)
 {
   if (!CheckAddressRange (i_StartAddress, i_ByteCount))
     return false;
@@ -309,21 +309,21 @@ bool Eeprom::SetValue_FromStart ( uint16_t  i_StartAddress,
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::SetValue_FromEnd ( uint16_t  i_EndAddress,
+bool Eeprom::WriteRange_ToEnd ( uint16_t  i_EndAddress,
                                 uint16_t  i_ByteCount,
                                 uint8_t   i_Value)
 {
-  return SetValue_FromStart ( i_EndAddress - i_ByteCount,
-                              i_ByteCount,
-                              i_Value);
+  return WriteRange_FromStart ( i_EndAddress - i_ByteCount,
+                                i_ByteCount,
+                                i_Value);
 }
 
 //--------------------------------------------------------------------
-bool Eeprom::SetValue_StartToEnd (uint16_t  i_StartAddress,
+bool Eeprom::WriteRange_StartToEnd (uint16_t  i_StartAddress,
                                   uint16_t  i_EndAddress,
                                   uint8_t   i_Value)
 {
-  return SetValue_FromStart ( i_StartAddress,
-                              i_EndAddress - i_StartAddress,
-                              i_Value);
+  return WriteRange_FromStart ( i_StartAddress,
+                                i_EndAddress - i_StartAddress,
+                                i_Value);
 }
